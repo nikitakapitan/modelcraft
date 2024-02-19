@@ -1,52 +1,68 @@
-# NLP Hub: Fine-Tuning and Distillation of LLM Models
+# Model Craft: Fine-Tuning and Distillation of LLM Models
 
-Welcome to NLP Hub, a comprehensive toolkit for fine-tuning and distilling Large Language Models (LLMs) with ease. This project allows AI researchers and enthusiasts to utilize the power of Google Colab's GPU resources and Hugging Face's model hub to enhance and tailor language models for specific tasks.
+Model Craft is a toolkit for fine-tuning and distilling Large Language Models (LLMs) with ease. This project allows AI researchers and enthusiasts to craft their own LLMs and push them to Hugging Face's model hub.
 
 ## Quick Start
 
-Utilize your Hugging Face account and Google Colab's free GPU-enabled environment to start fine-tuning your LLM models in just a few steps.
+You only need to launch it, select the model, select the dataset and hit the button ✅
 
 ### Prerequisites
 
 - Google Colab account
 - Hugging Face account
 
-### Installation
+### Usage
 
-1. **Clone the Repository**
+Open new google colab notebook.
+
+Make sure your runtime is on GPU (ex. T4 GPU) 
+
+1. **Install Dependencies**
    
    ```bash
-   !git clone https://github.com/nikitakapitan/nlphub.git
-   !mv nlphub/finetune.yaml .
-   !mkdir logs
-
-2. **Install Dependencies**
-   
-   ```bash
+   %%capture
    !pip install datasets transformers evaluate accelerate 
 
-3. **Hugging Face Login**
+2. **Clone the Repository and make it global**
+   
+   ```bash
+   %%capture
+   !git clone https://github.com/nikitakapitan/modelcraft.git
+   %cd modelcraft
+   !mkdir logs
+   !pip install .
+
+
+3. **Configuration Setup**
+Import the config widget and customize it as you want
 
    ```bash
-   from huggingface_hub import login
-   login("hf_YOUR_TOKEN_HERE")
-
-4. **Configuration Setup**
-Import the configuration module and set up your fine-tuning parameters using an interactive widget.
-
-   ```bash
-   from nlphub.vizual.colab_yaml import config_yaml
+   from modelcraft.vizual.colab_widget import config_yaml
    config_yaml() 
+
+![Setup widget](docs/images/setup.png)
 
 ## Fine-Tuning Your Model
 
-Once you have configured your settings:
+Once you have configured your settings, use this comamand to fine-tune:
 
   ```bash
-  !python nlphub/finetune.py --config finetune.yaml
+  !python modelcraft/finetune.py --config finetune.yaml
   ```
 
-This command will start the fine-tuning process based on your specified configurations. Upon completion, the new model will automatically appear on your Hugging Face account.
+The model will be automatically pushed to your Hugging Face account.
+
+## Distill Your Model
+
+# WORK_IN_PROGRESS: Adjust widget for Distillation
+
+Once you have configured your settings, use this comamand to fine-tune:
+
+  ```bash
+  !python modelcraft/distill.py --config distill.yaml
+  ```
+
+The model will be automatically pushed to your Hugging Face account.
 
 ## Contributing
 We welcome contributions! If you'd like to improve or add features to NLP Hub, please feel free to submit a pull request.
