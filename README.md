@@ -40,7 +40,9 @@ Import the config widget and customize it as you want
    from modelcraft.vizual.colab_widget import config_yaml
    config_yaml() 
 
-![Setup widget](docs/images/setup.png)
+<p align="center">
+  <img src="docs/images/setup.png" alt="Setup widget" />
+</p>
 
 ## Fine-Tuning Your Model
 
