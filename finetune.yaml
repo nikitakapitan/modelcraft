@@ -1,0 +1,16 @@
+TASK: text-classification
+DATASET_NAME: glue
+DATASET_CONFIG_NAME: cola
+BASE_MODEL_NAME: distilbert-base-uncased
+METRICS:
+  - accuracy: {}
+  - f1      : {average: weighted}
+  - glue    : ['cola']
+BATCH_SIZE: 16
+NUM_EPOCHS: 3
+WEIGHT_DECAY: 0.01
+LEARNING_RATE: 0.00002
+WARMUP_STEPS: 500
+PUSH_TO_HUB: True
+LOG_LEVEL: error
+HF_TOKEN: None
