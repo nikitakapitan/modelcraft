@@ -9,7 +9,7 @@ FineTuner ONLY overwrites define_compute_metrics to
 => re-define compute_metrics_func with accuracy and f1_score
 """
 
-from nlphub import Trainer
+from modelcraft import Trainer
 import logging
 import evaluate
 

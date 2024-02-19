@@ -14,7 +14,7 @@ from datasets import load_dataset
 from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
 import evaluate
-from nlphub.utils import rename_split_label_key, get_dataset_num_classes
+from modelcraft.utils import rename_split_label_key, get_dataset_num_classes
 
 class Trainer(ABC):
 

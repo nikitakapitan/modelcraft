@@ -1,4 +1,4 @@
-from nlphub import Trainer
+from modelcraft import Trainer
 import logging
 from transformers import AutoConfig, AutoTokenizer
 
