@@ -26,7 +26,7 @@ import argparse
 import time
 from transformers import TrainingArguments, Trainer
 from transformers import AutoTokenizer
-from modelcraft import FineTuner
+from modelcraft.FineTuner import FineTuner
 
 # Initialize logging
 if not os.path.exists('/content/logs/'):

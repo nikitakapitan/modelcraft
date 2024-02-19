@@ -12,7 +12,7 @@ import logging
 import argparse
 import time
 from modelcraft import  DistillationTrainingArguments, DistillationTrainer
-from modelcraft import Distiller
+from modelcraft.Distiller import Distiller
 
 
 # Initialize logging
