@@ -11,8 +11,8 @@ import yaml
 import logging
 import argparse
 import time
-from nlphub import  DistillationTrainingArguments, DistillationTrainer
-from nlphub import Distiller
+from modelcraft import  DistillationTrainingArguments, DistillationTrainer
+from modelcraft import Distiller
 
 
 # Initialize logging

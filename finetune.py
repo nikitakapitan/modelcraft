@@ -26,7 +26,7 @@ import argparse
 import time
 from transformers import TrainingArguments, Trainer
 from transformers import AutoTokenizer
-from nlphub import FineTuner
+from modelcraft import FineTuner
 
 # Initialize logging
 if not os.path.exists('/content/logs/'):

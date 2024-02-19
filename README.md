@@ -29,7 +29,6 @@ Make sure your runtime is on GPU (ex. T4 GPU)
    %%capture
    !git clone https://github.com/nikitakapitan/modelcraft.git
    %cd modelcraft
-   !mkdir logs
    !pip install .
 
 
