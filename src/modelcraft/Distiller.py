@@ -1,4 +1,4 @@
-from modelcraft import Trainer
+from modelcraft.Trainer import Trainer
 import logging
 from transformers import AutoConfig, AutoTokenizer
 
