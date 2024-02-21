@@ -24,11 +24,14 @@ dataset_config_name_options = {
     'race': ['highschool', 'college'],
 }
 
-model_options = ['bert-base-uncased', 'distilbert-base-uncased']
+model_options = ['bert-base-uncased', 'distilbert-base-uncased', 'CUSTOM']
 
 # Create widgets
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK:')
+
 base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL:')
+custom_base_model_name_widget = widgets.Text(value='CUSTOM_MODEL_HERE', description='MODEL:')
+
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
 dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
 hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='HF TOKEN:')
@@ -53,6 +56,15 @@ warmup_widget = widgets.Dropdown(options=warmup_options, value=data.get('WARMUP_
 num_epochs_widget = widgets.Dropdown(options=num_epochs_options, value=data.get('NUM_EPOCHS', 1), description='EPOCHS:')
 push_to_hub_widget = widgets.Dropdown(options=push_to_hub_options, value=data.get('PUSH_TO_HUB', False), description='PUSH2HUB:')
 evaluation_strategy_widget = widgets.Dropdown(options=evaluation_strategy_options, value=data.get('EVALUATION_STRATEGY', 'epoch'), description='EVAL EVERY:')
+
+def toggle_input(change):
+    if change['new'] == 'Other (Please specify)':
+        custom_base_model_name_widget.layout.visibility = 'visible'
+        custom_base_model_name_widget.disabled = False
+    else:
+        custom_base_model_name_widget.layout.visibility = 'hidden'
+        custom_base_model_name_widget.disabled = True
+        custom_base_model_name_widget.value = '' 
 
 # Function to toggle advanced settings
 def toggle_advanced_settings(change):
@@ -85,6 +97,7 @@ def update_metrics():
             {'f1': {'average': 'weighted'}}
         ]
 
+base_model_name_widget.observe(toggle_input, names='value')
 
 # Observe changes in TASK
 task_widget.observe(update_dataset_name_options, 'value')
