@@ -36,7 +36,7 @@ student_model_widget = widgets.Dropdown(options=student_options, value=data.get(
                                    tooltip = "Usually smaller standard model (ex. 'distilbert-base-uncased')")
 
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
-dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options.get([data['DATASET_NAME']],[]), value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
+dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options.get(data['DATASET_NAME'],[]), value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
 hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='HF TOKEN:')
 
 
@@ -74,7 +74,7 @@ def update_dataset_name_options(*args):
 
 # Update function for DATASET_NAME change
 def update_dataset_config_name_options(*args):
-    dataset_config_name_widget.options = dataset_config_name_options[dataset_name_widget.value]
+    dataset_config_name_widget.options = dataset_config_name_options.get(dataset_name_widget.value, [])
     update_metrics()
 
 # Update METRICS based on DATASET_NAME
