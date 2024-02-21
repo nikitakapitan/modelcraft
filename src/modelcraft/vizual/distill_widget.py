@@ -3,7 +3,7 @@ import ipywidgets as widgets
 from IPython.display import display, clear_output
 
 # Load your YAML file
-yaml_file = 'finetune.yaml'  # Replace with your YAML file path
+yaml_file = 'distill.yaml'  # Replace with your YAML file path
 
 with open(yaml_file) as file:
     data = yaml.safe_load(file)
@@ -30,8 +30,10 @@ model_options = ['bert-base-uncased', 'distilbert-base-uncased']
 # Create widgets
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK:')
 
-teacher_model_widget = widgets.Dropdown(options=model_options, value=data.get('TEACHER', model_options[0]), description='TEACHER:')
-student_model_widget = widgets.Dropdown(options=model_options, value=data.get('STUDENT', model_options[0]), description='STUDENT:')
+teacher_model_widget = widgets.Dropdown(options=model_options, value=data.get('TEACHER', model_options[0]), description='TEACHER:',
+                                   tooltip = "Usually Big custom Fine-Tuned that you want to reduce its size")
+student_model_widget = widgets.Dropdown(options=model_options, value=data.get('STUDENT', model_options[0]), description='STUDENT:',
+                                   tooltip = "Usually smaller standard model that will only provide the skeleton")
 
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
 dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
@@ -124,7 +126,7 @@ def save_changes(b):
 
     with output:
         clear_output()
-        print("YAML file updated!")
+        print(f"{yaml_file} updated!")
 
 save_button.on_click(save_changes)
 
