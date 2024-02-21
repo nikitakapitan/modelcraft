@@ -43,6 +43,8 @@ Import the config widget and customize it as you want
   <img src="docs/images/setup.png" alt="Setup widget" />
 </p>
 
+(!) WORK_IN_PROGRESS: Add custom model & dataaset name
+
 ## Fine-Tuning Your Model
 
 Once you have configured your settings, use this comamand to fine-tune:
@@ -55,7 +57,7 @@ The model will be automatically pushed to your Hugging Face account.
 
 ## Distill Your Model
 
-# WORK_IN_PROGRESS: Adjust widget for Distillation
+(!) WORK_IN_PROGRESS: Adjust widget for Distillation
 
 Once you have configured your settings, use this comamand to fine-tune:
 
