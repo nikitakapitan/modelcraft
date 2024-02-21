@@ -11,12 +11,11 @@ with open(yaml_file) as file:
 # Define the options for the widgets
 task_options = ['text-classification', 'ner', 'question-answering']
 dataset_name_options = {
-    'text-classification': ['imdb', 'glue', 'clinc_oos'],
+    'text-classification': ['imdb', 'glue', 'clinc_oos', 'emotion'],
     'ner': ['conll2003', 'ontonotes'],
     'question-answering': ['squad', 'race'],
 }
 dataset_config_name_options = {
-    'imdb': [None],
     'glue': ['cola', 'sst2', 'mrpc', 'mnli', 'qnli', 'qqp', 'rte', 'stsb', 'wnli', 'ax'],
     'clinc_oos': ['plus', None],
     'conll2003': ['eng', 'esp', 'ned'],
@@ -37,7 +36,7 @@ student_model_widget = widgets.Dropdown(options=student_options, value=data.get(
                                    tooltip = "Usually smaller standard model (ex. 'distilbert-base-uncased')")
 
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
-dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
+dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options.get([data['DATASET_NAME']],[]), value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
 hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='HF TOKEN:')
 
 

@@ -30,9 +30,11 @@ def main(args):
     tokenize = lambda batch: distiller.student_tokenizer(batch['text'], truncation=True)
     dataset_encoded = distiller.dataset.map(tokenize, batched=True)
 
+    data_cfg = f'_{config["DATASET_CONFIG_NAME"]}' if config["DATASET_CONFIG_NAME"] else ''
+
     # Distill Training Arguments
     student_training_args =  DistillationTrainingArguments(
-        output_dir=f'{config["TEACHER"]}-distilled-{config["DATASET_NAME"]}',
+        output_dir=f'{config["TEACHER"]}-distilled-{config["DATASET_NAME"]}{data_cfg}',
         num_train_epochs=config['NUM_EPOCHS'],
         learning_rate=config['LEARNING_RATE'],
         per_device_train_batch_size=config['BATCH_SIZE'],
