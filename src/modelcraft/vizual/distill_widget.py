@@ -59,7 +59,7 @@ push_to_hub_widget = widgets.Dropdown(options=push_to_hub_options, value=data.ge
 evaluation_strategy_widget = widgets.Dropdown(options=evaluation_strategy_options, value=data.get('EVALUATION_STRATEGY', 'epoch'), description='EVAL EVERY:')
 
 # Function to toggle advanced settings
-def toggle_advanced_settings():
+def toggle_advanced_settings(change):
     if advanced_checkbox.value:
         display(num_epochs_widget, batch_size_widget, learning_rate_widget, alpha_widget, push_to_hub_widget, evaluation_strategy_widget)
     else:
