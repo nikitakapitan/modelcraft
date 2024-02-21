@@ -25,15 +25,16 @@ dataset_config_name_options = {
     'race': ['highschool', 'college'],
 }
 
-model_options = ['bert-base-uncased', 'distilbert-base-uncased']
+teacher_options = ['bert-base-uncased', 'distilbert-base-uncased']
+student_options = ['distilbert-base-uncased']
 
 # Create widgets
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK:')
 
-teacher_model_widget = widgets.Dropdown(options=model_options, value=data.get('TEACHER', model_options[0]), description='TEACHER:',
-                                   tooltip = "Usually Big custom Fine-Tuned that you want to reduce its size")
-student_model_widget = widgets.Dropdown(options=model_options, value=data.get('STUDENT', model_options[0]), description='STUDENT:',
-                                   tooltip = "Usually smaller standard model that will only provide the skeleton")
+teacher_model_widget = widgets.Text(value='nikitakapitan/bert-base-uncased-finetuned-emotion', description='HF_TEACHER:',
+                                   tooltip = "Usually some larger Fine-Tuned model with knowledge you want to distill")
+student_model_widget = widgets.Dropdown(options=student_options, value=data.get('STUDENT', student_options[0]), description='STUDENT:',
+                                   tooltip = "Usually smaller standard model (ex. 'distilbert-base-uncased')")
 
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
 dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')

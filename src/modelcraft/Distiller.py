@@ -15,7 +15,7 @@ class Distiller(Trainer):
     def init_model(self):
 
         # INIT Teacher
-        hf_model = f"{self.config['HF_USER']}/{self.config['TEACHER']}"
+        hf_model = self.config['TEACHER']
         teacher = self.AutoModelClass.from_pretrained(hf_model, num_labels=self.num_classes)
         logging.info(f"Model {teacher.__class__.__name__} initialized with {self.num_classes} classes.")
         teacher.to(self.device)
