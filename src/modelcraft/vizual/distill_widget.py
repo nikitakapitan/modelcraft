@@ -30,7 +30,7 @@ student_options = ['distilbert-base-uncased']
 # Create widgets
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK:')
 
-teacher_model_widget = widgets.Text(value='nikitakapitan/bert-base-uncased-finetuned-emotion', description='HF_TEACHER:',
+teacher_model_widget = widgets.Text(value='nikitakapitan/bert-base-uncased-finetuned-emotion', description='TEACHER:',
                                    tooltip = "Usually some larger Fine-Tuned model with knowledge you want to distill")
 student_model_widget = widgets.Dropdown(options=student_options, value=data.get('STUDENT', student_options[0]), description='STUDENT:',
                                    tooltip = "Usually smaller standard model (ex. 'distilbert-base-uncased')")

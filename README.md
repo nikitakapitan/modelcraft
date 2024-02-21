@@ -33,10 +33,14 @@ Make sure your runtime is on GPU (ex. T4 GPU)
 
 
 3. **Configuration Setup**
-Import the config widget and customize it as you want
+
+
+### Fine-Tuning Your Model
+
+Import the finetune widget and customize it.
 
    ```bash
-   from modelcraft.vizual.colab_widget import config_yaml
+   from modelcraft.vizual.finetune_widget import config_yaml
    config_yaml() 
 
 <p align="center">
@@ -45,7 +49,7 @@ Import the config widget and customize it as you want
 
 (!) WORK_IN_PROGRESS: Add custom model & dataaset name
 
-## Fine-Tuning Your Model
+
 
 Once you have configured your settings, use this comamand to fine-tune:
 
@@ -53,19 +57,28 @@ Once you have configured your settings, use this comamand to fine-tune:
   !python modelcraft/finetune.py --config finetune.yaml
   ```
 
-The model will be automatically pushed to your Hugging Face account.
+New finetuned model will be automatically pushed to your Hugging Face account 🤗
 
-## Distill Your Model
+### Distill Your Model
 
-(!) WORK_IN_PROGRESS: Adjust widget for Distillation
+Import the distill widget and customize it.
 
+   ```bash
+   from modelcraft.vizual.finetune_widget import config_yaml
+   config_yaml() 
+
+<p align="center">
+  <img src="docs/images/setup.png" alt="Setup widget" />
+</p>
+
+(!) WORK_IN_PROGRESS: Add custom model & dataaset name
 Once you have configured your settings, use this comamand to fine-tune:
 
   ```bash
   !python modelcraft/distill.py --config distill.yaml
   ```
 
-The model will be automatically pushed to your Hugging Face account.
+New distilled model will be automatically pushed to your Hugging Face account 🤗
 
 ## Contributing
 We welcome contributions! If you'd like to improve or add features to NLP Hub, please feel free to submit a pull request.

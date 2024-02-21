@@ -11,7 +11,8 @@ import yaml
 import logging
 import argparse
 import time
-from modelcraft import  DistillationTrainingArguments, DistillationTrainer
+from modelcraft.efficiency.DistillationTrainer import DistillationTrainer
+from modelcraft.efficiency.DistillationTrainingArguments import DistillationTrainingArguments
 from modelcraft.Distiller import Distiller
 
 
