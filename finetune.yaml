@@ -1,16 +1,18 @@
-TASK: text-classification
-DATASET_NAME: glue
-DATASET_CONFIG_NAME: cola
-BASE_MODEL_NAME: distilbert-base-uncased
-METRICS:
-  - accuracy: {}
-  - f1      : {average: weighted}
-  - glue    : ['cola']
+BASE_MODEL_NAME: HYU
 BATCH_SIZE: 16
-NUM_EPOCHS: 3
-WEIGHT_DECAY: 0.01
-LEARNING_RATE: 0.00002
-WARMUP_STEPS: 500
-PUSH_TO_HUB: True
+DATASET_CONFIG_NAME: cola
+DATASET_NAME: glue
+HF_TOKEN: hf_YOUR_TOKEN_HERE
+LEARNING_RATE: 2.0e-05
 LOG_LEVEL: error
-HF_TOKEN: None
+METRICS:
+- accuracy: {}
+- f1:
+    average: weighted
+- glue:
+  - cola
+NUM_EPOCHS: 3
+PUSH_TO_HUB: true
+TASK: text-classification
+WARMUP_STEPS: 500
+WEIGHT_DECAY: 0.01

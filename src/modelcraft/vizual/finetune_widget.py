@@ -2,6 +2,7 @@ import yaml
 import ipywidgets as widgets
 from IPython.display import display, clear_output
 
+
 yaml_file = 'finetune.yaml'  
 
 with open(yaml_file) as file:
@@ -24,17 +25,19 @@ dataset_config_name_options = {
     'race': ['highschool', 'college'],
 }
 
-model_options = ['bert-base-uncased', 'distilbert-base-uncased', 'CUSTOM']
+model_options = ['bert-base-uncased', 'distilbert-base-uncased']
 
 # Create widgets
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK:')
-
 base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL:')
-custom_base_model_name_widget = widgets.Text(value='CUSTOM_MODEL_HERE', description='MODEL:')
-
+custom_model_checkbox = widgets.Checkbox(value=False, description='CUSTOM')  # Checkbox for custom model name
+custom_model_name_widget = widgets.Text(value='', description='Custom MODEL Name:', placeholder='Enter custom model name')  # Text input for custom model name
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
 dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
 hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='HF TOKEN:')
+
+# Initialize an empty VBox for conditionally displaying the custom model name widget
+custom_model_container = widgets.VBox([])
 
 
 # Additional options for advanced settings
@@ -57,15 +60,6 @@ num_epochs_widget = widgets.Dropdown(options=num_epochs_options, value=data.get(
 push_to_hub_widget = widgets.Dropdown(options=push_to_hub_options, value=data.get('PUSH_TO_HUB', False), description='PUSH2HUB:')
 evaluation_strategy_widget = widgets.Dropdown(options=evaluation_strategy_options, value=data.get('EVALUATION_STRATEGY', 'epoch'), description='EVAL EVERY:')
 
-def toggle_input(change):
-    if change['new'] == 'Other (Please specify)':
-        custom_base_model_name_widget.layout.visibility = 'visible'
-        custom_base_model_name_widget.disabled = False
-    else:
-        custom_base_model_name_widget.layout.visibility = 'hidden'
-        custom_base_model_name_widget.disabled = True
-        custom_base_model_name_widget.value = '' 
-
 # Function to toggle advanced settings
 def toggle_advanced_settings(change):
     if advanced_checkbox.value:
@@ -73,6 +67,13 @@ def toggle_advanced_settings(change):
     else:
         clear_output()
         config_yaml()
+
+# Update function for CUSTOM checkbox change
+def toggle_custom_model_name_widget(change):
+    if change.new:  # If checkbox is checked
+        custom_model_container.children = [custom_model_name_widget]
+    else:
+        custom_model_container.children = []
 
 # Update function for TASK change
 def update_dataset_name_options(*args):
@@ -97,10 +98,11 @@ def update_metrics():
             {'f1': {'average': 'weighted'}}
         ]
 
-base_model_name_widget.observe(toggle_input, names='value')
 
 # Observe changes in TASK
 task_widget.observe(update_dataset_name_options, 'value')
+
+custom_model_checkbox.observe(toggle_custom_model_name_widget, 'value')
 
 # Observe changes in DATASET_NAME
 dataset_name_widget.observe(update_dataset_config_name_options, 'value')
@@ -115,7 +117,10 @@ def save_changes(b):
     data['TASK'] = task_widget.value
     data['DATASET_NAME'] = dataset_name_widget.value
     data['DATASET_CONFIG_NAME'] = dataset_config_name_widget.value
-    data['BASE_MODEL_NAME'] = base_model_name_widget.value
+    if custom_model_checkbox.value:
+        data['BASE_MODEL_NAME'] = custom_model_name_widget.value
+    else:
+        data['BASE_MODEL_NAME'] = base_model_name_widget.value
     data['HF_TOKEN'] = hf_token_widget.value 
     if advanced_checkbox.value:
         data['NUM_EPOCHS'] = num_epochs_widget.value
@@ -142,7 +147,7 @@ output = widgets.Output()
 
 # Display widgets
 def config_yaml():
-    display(hf_token_widget,base_model_name_widget, task_widget, dataset_name_widget,
+    display(hf_token_widget,base_model_name_widget, task_widget, dataset_name_widget, custom_model_checkbox, custom_model_container,
              dataset_config_name_widget, advanced_checkbox, save_button, output)
     
     # if advanced_checkbox.value:
