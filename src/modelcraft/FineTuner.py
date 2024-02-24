@@ -20,13 +20,15 @@ class FineTuner(Trainer):
         self._load_metrics()         # self.metrics
 
     def _load_metrics(self):
-        """output is a dict keys = functions, values = configs:
+        """output is a dict -> keys = functions, values = configs:
         {evaluate.metrics.accuracy : {},
          evaluate.metrics.f1_score : {average: weighted}
         """
         metrics_functions = {}
         for metric_dict in self.config['METRICS']:
+            # ex. metric_dict = {'f1': {'average': 'weighted'}}
             for metric_name, metric_cfg in metric_dict.items():
+                # ex. metric_name = 'f1'; metric_cfg = {'average': 'weighted'}
                 if metric_name == "glue":
                     for glue_task in metric_cfg:
                         metrics_functions[evaluate.load("glue", glue_task)] = {}
