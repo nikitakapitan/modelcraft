@@ -1,17 +1,17 @@
 BASE_MODEL_NAME: distilbert-base-uncased
 BATCH_SIZE: 16
+COMPUTE_METRICS: true
 DATASET_CONFIG_NAME: null
 DATASET_NAME: imdb
 HF_TOKEN: hf_YOUR_TOKEN_HERE
 LEARNING_RATE: 2.0e-05
 LOG_LEVEL: error
-COMPUTE_METRICS: False
 METRICS:
 - accuracy: {}
 - f1:
-    average: weighted
+    average: micro
 - glue:
-  - cola
+  - qqp
 NUM_EPOCHS: 3
 PUSH_TO_HUB: true
 TASK: text-classification

@@ -40,7 +40,6 @@ def update_dataset_name_options(change):
 
 def update_dataset_config_name_options(change):
     dataset_config_name_widget.options = dataset_config_name_options[dataset_name_widget.value]
-    update_metrics()
 
 task_widget.observe(update_dataset_name_options, 'value')
 dataset_name_widget.observe(update_dataset_config_name_options, 'value')
@@ -48,65 +47,58 @@ dataset_name_widget.observe(update_dataset_config_name_options, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CORE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CUSTOM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-custom_model_checkbox = widgets.Checkbox(value=False, description='CUSTOM')  
-custom_container = widgets.VBox([]) 
-custom_model_name_widget = widgets.Text(value='', description='CS.MODEL:', placeholder='Enter custom model name')
-custom_dataset_name_widget = widgets.Text(value='', description='CS.DATASET:', placeholder='Enter custom dataset name')
-custom_dataset_config_name_widget = widgets.Text(value='', description='CS.DATA.CFG:', placeholder='Enter custom dataset config name')
+custom_model_checkbox = widgets.Checkbox(value=False, description='⚙️CUSTOM')  
+custom_container = widgets.VBox([])
+custom_model_name_widget = widgets.Text(value='', description='⚙️MODEL:', placeholder='Enter custom model name')
+custom_dataset_name_widget = widgets.Text(value='', description='⚙️DATASET:', placeholder='Enter custom dataset name')
+custom_dataset_config_name_widget = widgets.Text(value='', description='⚙️DATA.CFG:', placeholder='Enter custom dataset config name')
 
 # Update function for CUSTOM checkbox change
 def toggle_custom_model_name_widget(change):
-    if change.new:  # If checkbox is checked
-        custom_container.children = [custom_model_name_widget, custom_dataset_name_widget, custom_dataset_config_name_widget]
+    if change.new:
+        custom_container.layout=widgets.Layout(border='1px solid black', padding='10px', background='lightgreen')
+        custom_container.children = [custom_model_name_widget, custom_dataset_name_widget, custom_dataset_config_name_widget] if change.new else []
+        for widget in (base_model_name_widget, dataset_name_widget, dataset_config_name_widget): widget.layout.display = 'none'
     else:
-        custom_container.children = []
+        custom_container.layout.display = 'none'
+        for widget in (base_model_name_widget, dataset_name_widget, dataset_config_name_widget): widget.layout.display = 'flex'
+
+
+
+
 
 custom_model_checkbox.observe(toggle_custom_model_name_widget, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< METRICS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-isCompute_metrics_checkbox = widgets.Checkbox(value=False, description='METRICS?')
-metrics_container = widgets.VBox([])
-isAccuracyW = widgets.Checkbox(value=False, description='Accuracy')
-isF1W = widgets.Checkbox(value=False, description='F1')
+add_metrics_checkbox = widgets.Checkbox(value=False, description='ADD METRICS?')
+metrics_container = widgets.HBox([])
+# Accuracy
+isAccuracy_widget = widgets.Checkbox(value=False, description='accuracy')
+# F1
+isF1_widget = widgets.Checkbox(value=False, description='f1')
+f1_average_container = widgets.VBox([])
+f1_average_widget = widgets.Dropdown(options=['macro', 'micro', 'weighted'], description='f1 average:', layout=widgets.Layout(width='auto'))
 # Glue
-isGlueW = widgets.Checkbox(value=False, description='GLUE')
-glue_metrics_widget = widgets.Dropdown(options=glue_metrics, description='GLUE metric:', layout={'display': 'none'})
+isGlue_widget = widgets.Checkbox(value=False, description='glue')
+glue_metrics_container = widgets.VBox([])
+glue_metrics_widget = widgets.Dropdown(options=glue_metrics, description='GLUE metric:', layout=widgets.Layout(width='auto'))
 
-metrics_container.children = [isAccuracyW, isF1W, isGlueW]
+def toggle_add_metrics(change):  
+    metrics_container.children = [isAccuracy_widget, isF1_widget, f1_average_container, isGlue_widget, glue_metrics_container] if change.new else []
 
-def update_glue_metrics_widget(change):
-    if isGlueW.value:
-        metrics_container.children = [isAccuracyW, isF1W, isGlueW, glue_metrics_widget]
-        glue_metrics_widget.layout.display = 'block'
-    else:
-        metrics_container.children = [isAccuracyW, isF1W, isGlueW]
-        glue_metrics_widget.layout.display = 'none'
+# def toggle_isAccuracyW(change): NO NEED
 
-isGlueW.observe(update_glue_metrics_widget, 'value')
+def toggle_f1W(change):
+    f1_average_container.children = [f1_average_widget] if change.new else []
 
-def toggle_metrics(change):
-    if isCompute_metrics_checkbox.value:
-        display(metrics_container)
-    else:
-        clear_output()
-        display_finetune()
+def toggle_isGlue_widget(change):
+    glue_metrics_container.children = [glue_metrics_widget] if change.new else []
 
-isCompute_metrics_checkbox.observe(toggle_metrics, 'value')
+isF1_widget.observe(toggle_f1W, 'value')
+isGlue_widget.observe(toggle_isGlue_widget, 'value')
+add_metrics_checkbox.observe(toggle_add_metrics, 'value')
 
-# Update METRICS based on DATASET_NAME
-# def update_metrics():
-#     if dataset_name_widget.value == 'glue':
-#         data['METRICS'] = [
-#             {'accuracy': {}},
-#             {'f1': {'average': 'weighted'}},
-#             {'glue': [dataset_config_name_widget.value]}
-#         ]
-#     else:
-#         data['METRICS'] = [
-#             {'accuracy': {}},
-#             {'f1': {'average': 'weighted'}}
-#         ]
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> METRICS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
@@ -158,9 +150,16 @@ def save_changes(b):
         data['DATASET_NAME'] = dataset_name_widget.value
         data['DATASET_CONFIG_NAME'] = dataset_config_name_widget.value  
     
-    data['COMPUTE_METRICS'] = isCompute_metrics_checkbox.value
-    if isCompute_metrics_checkbox.value:
-        pass
+    data['COMPUTE_METRICS'] = add_metrics_checkbox.value
+    if add_metrics_checkbox.value:
+        metrics_config = []
+        if isAccuracy_widget.value:
+            metrics_config.append({'accuracy': {}})
+        if isF1_widget.value:
+            metrics_config.append({'f1': {'average': f1_average_widget.value}})
+        if isGlue_widget.value:
+            metrics_config.append({'glue': [glue_metrics_widget.value]})
+        data['METRICS'] = metrics_config
     
     if advanced_checkbox.value:
         data['NUM_EPOCHS'] = num_epochs_widget.value
@@ -171,7 +170,7 @@ def save_changes(b):
         data['PUSH_TO_HUB'] = push_to_hub_widget.value
         data['EVALUATION_STRATEGY'] = evaluation_strategy_widget.value
 
-    update_metrics()
+    # update_metrics()
 
     with open(yaml_file, 'w') as file:
         yaml.safe_dump(data, file)
@@ -190,6 +189,11 @@ output = widgets.Output()
 
 # Display widgets
 def display_finetune():
-    display(hf_token_widget, base_model_name_widget, custom_model_checkbox, custom_container, task_widget, dataset_name_widget, 
-             dataset_config_name_widget, isCompute_metrics_checkbox, advanced_checkbox, save_button, output)
+    display(hf_token_widget, 
+            base_model_name_widget, 
+            task_widget, 
+            dataset_name_widget, dataset_config_name_widget, 
+            custom_model_checkbox, custom_container, 
+            add_metrics_checkbox, metrics_container, 
+            advanced_checkbox, save_button, output)
     
