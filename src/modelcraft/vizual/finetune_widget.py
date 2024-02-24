@@ -49,9 +49,9 @@ dataset_name_widget.observe(update_dataset_config_name_options, 'value')
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CUSTOM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 custom_model_checkbox = widgets.Checkbox(value=False, description='⚙️CUSTOM')  
 custom_container = widgets.VBox([])
-custom_model_name_widget = widgets.Text(value='', description='⚙️MODEL:', placeholder='Enter custom model name')
-custom_dataset_name_widget = widgets.Text(value='', description='⚙️DATASET:', placeholder='Enter custom dataset name')
-custom_dataset_config_name_widget = widgets.Text(value='', description='⚙️DATA.CFG:', placeholder='Enter custom dataset config name')
+custom_model_name_widget = widgets.Text(value='', description='⚙️MODEL', placeholder='Enter custom model name')
+custom_dataset_name_widget = widgets.Text(value='', description='⚙️DATASET', placeholder='Enter custom dataset name')
+custom_dataset_config_name_widget = widgets.Text(value='', description='⚙️DATA.CFG', placeholder='Enter custom dataset config')
 
 # Update function for CUSTOM checkbox change
 def toggle_custom_model_name_widget(change):
@@ -71,7 +71,7 @@ custom_model_checkbox.observe(toggle_custom_model_name_widget, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< METRICS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-add_metrics_checkbox = widgets.Checkbox(value=False, description='ADD METRICS?')
+add_metrics_checkbox = widgets.Checkbox(value=False, description='📈Compute METRICS')
 metrics_container = widgets.HBox([])
 # Accuracy
 isAccuracy_widget = widgets.Checkbox(value=False, description='accuracy')
@@ -104,7 +104,9 @@ add_metrics_checkbox.observe(toggle_add_metrics, 'value')
 
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ADVANCED <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-num_epochs_options = [1, 2, 3, 5, 10, 100]
+advanced_settings_container = widgets.VBox([])
+
+num_epochs_options = [1, 3, 10, 100]
 weight_decay_options = [0.0, 0.01, 0.02, 0.03, 0.05]
 learning_rate_options = [0.00001, 0.00002, 0.0001, 0.0002, 0.001]
 push_to_hub_options = [True, False]
@@ -113,22 +115,23 @@ batch_size_options = [4, 8, 16, 32, 64]
 warmup_options = [100, 300, 500]
 
 # Advanced settings widgets
-advanced_checkbox = widgets.Checkbox(value=False, description='Advanced')
+advanced_checkbox = widgets.Checkbox(value=False, description='📐Training settings')
 batch_size_widget = widgets.Dropdown(options=batch_size_options, value=data.get('BATCH_SIZE', 16), description='BATCH SIZE:')
 num_epochs_widget = widgets.Dropdown(options=num_epochs_options, value=data.get('NUM_EPOCHS', 1), description='EPOCHS:')
-weight_decay_widget = widgets.Dropdown(options=weight_decay_options, value=data.get('WEIGHT_DECAY', 0.0), description='W8 DECAY:')
-learning_rate_widget = widgets.Dropdown(options=learning_rate_options, value=data.get('LEARNING_RATE', 0.0001), description='LRATE:')
-warmup_widget = widgets.Dropdown(options=warmup_options, value=data.get('WARMUP_STEPS', 500), description='WARMUP:')
+weight_decay_widget =  widgets.FloatSlider(value=data.get('WEIGHT_DECAY', 0.0), min=0.0, max=0.05, step=0.01, description='W8 DECAY:')
+learning_rate_widget = widgets.FloatLogSlider(value=1e-05, base=10, min=-5, max=-3, step=0.25, description='LRATE:')
+warmup_widget = widgets.IntSlider(value=data.get('WARMUP_STEPS', 500), min=100, max=500, step=200, description='WARMUP:')
 num_epochs_widget = widgets.Dropdown(options=num_epochs_options, value=data.get('NUM_EPOCHS', 1), description='EPOCHS:')
-push_to_hub_widget = widgets.Dropdown(options=push_to_hub_options, value=data.get('PUSH_TO_HUB', False), description='PUSH2HUB:')
+push_to_hub_widget = widgets.Checkbox(value=data.get('PUSH_TO_HUB', False), description='PUSH2HUB🤗')
 evaluation_strategy_widget = widgets.Dropdown(options=evaluation_strategy_options, value=data.get('EVALUATION_STRATEGY', 'epoch'), description='EVAL EVERY:')
 
 def toggle_advanced_settings(change):
-    if advanced_checkbox.value:
-        display(num_epochs_widget, batch_size_widget, weight_decay_widget, learning_rate_widget, warmup_widget, push_to_hub_widget, evaluation_strategy_widget)
+    if change.new:
+        advanced_settings_container.layout=widgets.Layout(border='1px solid black', padding='10px', background='lightgreen')
+        advanced_settings_container.children=[num_epochs_widget, batch_size_widget, weight_decay_widget, learning_rate_widget, 
+                                              warmup_widget, push_to_hub_widget, evaluation_strategy_widget] 
     else:
-        clear_output()
-        display_finetune()
+        advanced_settings_container.layout.display = 'none'
 
 advanced_checkbox.observe(toggle_advanced_settings, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADVANCED >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -188,12 +191,13 @@ save_button.on_click(save_changes)
 output = widgets.Output()
 
 # Display widgets
-def display_finetune():
+def finetune_widget():
     display(hf_token_widget, 
             base_model_name_widget, 
             task_widget, 
             dataset_name_widget, dataset_config_name_widget, 
             custom_model_checkbox, custom_container, 
             add_metrics_checkbox, metrics_container, 
-            advanced_checkbox, save_button, output)
+            advanced_checkbox, advanced_settings_container,
+            save_button, output)
     
