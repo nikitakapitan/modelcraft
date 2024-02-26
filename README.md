@@ -17,22 +17,24 @@ Open new google colab notebook.
 
 Make sure your runtime is on GPU (ex. T4 GPU) 
 
-1. **Install Dependencies**
+## 1. **Install Dependencies**
    
    ```bash
    %%capture
    !pip install datasets transformers evaluate accelerate 
+   ```
 
-2. **Clone the Repository and make it global**
+## 2. **Clone the Repository and make it global**
    
    ```bash
    %%capture
    !git clone https://github.com/nikitakapitan/modelcraft.git
    %cd modelcraft
    !pip install .
+```
 
 
-3. **Configuration Setup**
+## 3. Finetune or Distill your model
 
 
 ### Fine-Tuning Your Model
@@ -40,45 +42,42 @@ Make sure your runtime is on GPU (ex. T4 GPU)
 Import the finetune widget and customize it.
 
    ```bash
-   from modelcraft.vizual.finetune_widget import config_yaml
-   config_yaml() 
+   from modelcraft.vizual.finetune_widget import display_finetune
+   display_finetune()
+```
 
 <p align="center">
   <img src="docs/images/setup.png" alt="Setup widget" />
 </p>
 
-(!) WORK_IN_PROGRESS: Add custom model & dataaset name
-
-
-
-Once you have configured your settings, use this comamand to fine-tune:
+Run the job:
 
   ```bash
   !python modelcraft/finetune.py --config finetune.yaml
   ```
 
-New finetuned model will be automatically pushed to your Hugging Face account 🤗
+Done ✅ Your new Finetuned model is automatically pushed to your Hugging Face account 🤗
 
 ### Distill Your Model
 
 Import the distill widget and customize it.
 
    ```bash
-   from modelcraft.vizual.finetune_widget import config_yaml
-   config_yaml() 
+   from modelcraft.vizual.finetune_widget import display_distill
+   display_distill()
+```
 
 <p align="center">
-  <img src="docs/images/setup.png" alt="Setup widget" />
+  <img src="docs/images/distill_setup.png" alt="Setup widget" />
 </p>
 
-(!) WORK_IN_PROGRESS: Add custom model & dataaset name
-Once you have configured your settings, use this comamand to fine-tune:
+Do the job:
 
   ```bash
   !python modelcraft/distill.py --config distill.yaml
   ```
 
-New distilled model will be automatically pushed to your Hugging Face account 🤗
+Done ✅ Your new Distilled model is automatically pushed to your Hugging Face account 🤗
 
 ## Contributing
-We welcome contributions! If you'd like to improve or add features to NLP Hub, please feel free to submit a pull request.
+We welcome contributions! If you'd like to improve or add features to Model Craft, please feel free to submit a pull request.
