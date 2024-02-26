@@ -53,12 +53,12 @@ Import the finetune widget and customize it.
 ### Finetune Your Model
 
   ```bash
-  !python modelcraft/finetune.py --config config.yaml
+  !python finetune.py --config config.yaml
   ```
 
 ### Distill Your Model
   ```bash
-  !python modelcraft/distill.py --config config.yaml
+  !python distill.py --config config.yaml
   ```
 
 Done ✅ Your new model is automatically pushed to your Hugging Face account 🤗
