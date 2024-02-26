@@ -32,11 +32,11 @@ dataset_config_name_options = {
 model_options = ['bert-base-uncased', 'distilbert-base-uncased']
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CORE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='🤗HF TOKEN:')
-base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL:')
-task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK:')
-dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
-dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG:')
+hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='🤗HFTOKEN')
+base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL')
+task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK')
+dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET')
+dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATASETCFG')
 
 def update_dataset_name_options(change):
     dataset_name_widget.options = dataset_name_options[task_widget.value]
@@ -50,7 +50,7 @@ dataset_name_widget.observe(update_dataset_config_name_options, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CORE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DISTILL <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-distill_checkbox = widgets.Checkbox(value=False, description='Distillation')  
+distill_checkbox = widgets.Checkbox(value=False, description='⚗️Distillation')  
 distill_container = widgets.VBox([])
 distill_teacher_name_widget = widgets.Text(value='', description='🎓TEACHER', placeholder='Enter teacher model name')
 distill_alpha_widget =  widgets.FloatSlider(value=1.0, min=0.0, max=1.0, step=0.1, description='ALPHA')
