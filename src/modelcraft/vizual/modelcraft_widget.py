@@ -36,7 +36,7 @@ hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='🤗HFTO
 base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL')
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK')
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET')
-dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATASETCFG')
+dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG')
 
 def update_dataset_name_options(change):
     dataset_name_widget.options = dataset_name_options[task_widget.value]
