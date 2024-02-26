@@ -34,50 +34,34 @@ Make sure your runtime is on GPU (ex. T4 GPU)
 ```
 
 
-## 3. Finetune or Distill your model
+## 3. Customize your config
 
-
-### Fine-Tuning Your Model
 
 Import the finetune widget and customize it.
 
    ```bash
-   from modelcraft.vizual.finetune_widget import display_finetune
-   display_finetune()
+   from modelcraft import widget
+   widget()
 ```
 
 <p align="center">
-  <img src="docs/images/setup.png" alt="Setup widget" />
+  <img src="docs/images/widget.png" alt="Setup widget" />
 </p>
 
-Run the job:
+## 4. Run the job:
+
+### Fine-Tuning Your Model
 
   ```bash
   !python modelcraft/finetune.py --config finetune.yaml
   ```
 
-Done ✅ Your new Finetuned model is automatically pushed to your Hugging Face account 🤗
-
 ### Distill Your Model
-
-Import the distill widget and customize it.
-
-   ```bash
-   from modelcraft.vizual.finetune_widget import display_distill
-   display_distill()
-```
-
-<p align="center">
-  <img src="docs/images/distill_setup.png" alt="Setup widget" />
-</p>
-
-Do the job:
-
   ```bash
-  !python modelcraft/distill.py --config distill.yaml
+  !python modelcraft/finetune.py --config finetune.yaml
   ```
 
-Done ✅ Your new Distilled model is automatically pushed to your Hugging Face account 🤗
+Done ✅ Your new Finetuned model is automatically pushed to your Hugging Face account 🤗
 
 ## Contributing
 We welcome contributions! If you'd like to improve or add features to Model Craft, please feel free to submit a pull request.
