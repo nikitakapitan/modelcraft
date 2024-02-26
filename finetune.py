@@ -1,19 +1,5 @@
-# Colab:
-# Turn ON GPU
-# %%capture
-# !git clone https://github.com/nikitakapitan/nlphub.git
-# !pip install datasets transformers evaluate accelerate 
-
-# %cd nlphub
-# !mkdir logs
-# !pip install .
-
-# from modelcraft import widget
-# widget()
-# python finetune.py --config config.yaml
-
 """
-train.py simply:
+This file:
 - init FineTuner(config) : which defines task, data, tokenizer, model and metrics
 - create hf.TrainingArgs and hf.Trainer
 - train, evaluate, push_to_hub
@@ -25,7 +11,6 @@ import logging
 import argparse
 import time
 from transformers import TrainingArguments, Trainer
-from transformers import AutoTokenizer
 from modelcraft.FineTuner import FineTuner
 
 # Initialize logging
@@ -70,7 +55,7 @@ def main(args):
         compute_metrics=finetuner.compute_metrics_func,
     )
   
-    print("Start TRAINING")
+    print("Start [Finetuning] TRAINING")
     trainer.train()
     trainer.evaluate()
 

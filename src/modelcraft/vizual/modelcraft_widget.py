@@ -36,13 +36,13 @@ hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='🤗HFTO
 base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL')
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK')
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET')
-dataset_config_name_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG')
+dataset_config_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG')
 
 def update_dataset_name_options(change):
-    dataset_name_widget.options = dataset_name_options[task_widget.value]
+    dataset_name_widget.options = dataset_name_options.get(task_widget.value, [])
 
 def update_dataset_config_name_options(change):
-    dataset_config_name_widget.options = dataset_config_name_options[dataset_name_widget.value]
+    dataset_config_widget.options = dataset_config_name_options.get(dataset_name_widget.value, [])
 
 task_widget.observe(update_dataset_name_options, 'value')
 dataset_name_widget.observe(update_dataset_config_name_options, 'value')
@@ -78,10 +78,10 @@ def toggle_custom_model_checkbox(change):
         custom_container.layout=widgets.Layout(border='1px solid black', padding='10px', background='lightgreen')
         custom_container.children = [custom_model_name_widget, custom_dataset_name_widget, custom_dataset_config_name_widget] if change.new else []
         # hide CORE widgets
-        for widget in (base_model_name_widget, dataset_name_widget, dataset_config_name_widget): widget.layout.display = 'none'
+        for widget in (base_model_name_widget, dataset_name_widget, dataset_config_widget): widget.layout.display = 'none'
     else:
         custom_container.layout.display = 'none'
-        for widget in (base_model_name_widget, dataset_name_widget, dataset_config_name_widget): widget.layout.display = 'flex'
+        for widget in (base_model_name_widget, dataset_name_widget, dataset_config_widget): widget.layout.display = 'flex'
 
 custom_model_checkbox.observe(toggle_custom_model_checkbox, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -101,10 +101,11 @@ glue_metrics_container = widgets.VBox([])
 glue_metrics_widget = widgets.Dropdown(options=glue_metrics, description='GLUE metric:', layout=widgets.Layout(width='auto'))
 
 def toggle_add_metrics(change):  
-    metrics_container.layout=widgets.Layout(border='1px solid black', padding='10px')
-    metrics_container.children = [isAccuracy_widget, isF1_widget, f1_average_container, isGlue_widget, glue_metrics_container] if change.new else []
-
-# def toggle_isAccuracyW(change): NO NEED
+    if change.new:
+        metrics_container.layout=widgets.Layout(border='1px solid black', padding='10px')
+        metrics_container.children = [isAccuracy_widget, isF1_widget, f1_average_container, isGlue_widget, glue_metrics_container] if change.new else []
+    else:
+        metrics_container.layout.display = 'none'
 
 def toggle_f1W(change):
     f1_average_container.children = [f1_average_widget] if change.new else []
@@ -140,7 +141,7 @@ learning_rate_widget = widgets.FloatLogSlider(value=1e-05, base=10, min=-5, max=
 warmup_widget = widgets.IntSlider(value=data.get('WARMUP_STEPS', 500), min=100, max=500, step=200, description='WARMUP:')
 num_epochs_widget = widgets.Dropdown(options=num_epochs_options, value=data.get('NUM_EPOCHS', 1), description='EPOCHS:')
 push_to_hub_widget = widgets.Checkbox(value=data.get('PUSH_TO_HUB', False), description='PUSH2HUB🤗')
-evaluation_strategy_widget = widgets.Dropdown(options=evaluation_strategy_options, value=data.get('EVALUATION_STRATEGY', 'epoch'), description='EVAL EVERY:')
+evaluation_strategy_widget = widgets.Dropdown(options=evaluation_strategy_options, value=data.get('EVALUATION_STRATEGY', 'epoch'), description='EVAL EVERY')
 
 def toggle_advanced_settings(change):
     if change.new:
@@ -158,12 +159,12 @@ advanced_checkbox.observe(toggle_advanced_settings, 'value')
 
 save_button = widgets.Button(description="Save Changes")
 
-def save_changes():
+def save_changes(change):
     data['HF_TOKEN'] = hf_token_widget.value 
     data['TASK'] = task_widget.value
     data['BASE_MODEL_NAME'] = base_model_name_widget.value
     data['DATASET_NAME'] = dataset_name_widget.value
-    data['DATASET_CONFIG_NAME'] = dataset_config_name_widget.value
+    data['DATASET_CONFIG_NAME'] = dataset_config_widget.value
 
     if distill_checkbox.value:
         data['DISTILL'] = True
@@ -215,7 +216,7 @@ def widget():
     display(hf_token_widget, 
             base_model_name_widget, 
             task_widget, 
-            dataset_name_widget, dataset_config_name_widget, 
+            dataset_name_widget, dataset_config_widget, 
             distill_checkbox, distill_container,
             custom_model_checkbox, custom_container, 
             add_metrics_checkbox, metrics_container, 

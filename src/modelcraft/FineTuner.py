@@ -20,9 +20,12 @@ class FineTuner(Trainer):
         self._load_metrics()         # self.metrics
 
     def _load_metrics(self):
-        """output is a dict -> keys = functions, values = configs:
-        {evaluate.metrics.accuracy : {},
-         evaluate.metrics.f1_score : {average: weighted}
+        """ This function cast metric names from yaml to real python functions
+
+        output is a dict : keys = functions, values = configs:
+        {evaluate..metrics.accuracy : {},
+         evaluate..metrics.f1_score : {average: weighted}
+         evaluate..metrics..glue    : {}
         """
         metrics_functions = {}
         for metric_dict in self.config['METRICS']:
@@ -39,6 +42,7 @@ class FineTuner(Trainer):
 
 
     def define_compute_metrics(self):
+        "It over-writes FineTuner instance with new compuet_metrics function"
 
         def compute_metrics(eval_pred):
             """ Output example:

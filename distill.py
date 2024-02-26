@@ -1,11 +1,9 @@
-# Colab:
-# Turn ON GPU
-# !git clone https://github.com/nikitakapitan/nlphub.git
-# !mv nlphub/distill.yaml .
-# !mkdir logs
-# !pip install datasets transformers evaluate accelerate 
+"""
+This file:
+- init Distiller(config) : which defines task, data, tokenizer, model and metrics
+...
+"""
 
-# python distill.py --config distill.yaml
 import os
 import yaml
 import logging
@@ -50,7 +48,7 @@ def main(args):
     )
 
     distill_trainer = DistillationTrainer(
-        model_init=distiller.student_init,
+        model_init=distiller.student_init, # dummy init, instead of from_pretrained
         teacher_model=distiller.teacher,
         args=student_training_args,
         train_dataset=dataset_encoded['train'],
@@ -60,7 +58,7 @@ def main(args):
     )
 
     # Train and Evaluate
-    logging.info("Start TRAINING")
+    logging.info("Start [Distillation] TRAINING")
     distill_trainer.train()
     distill_trainer.evaluate()
 
