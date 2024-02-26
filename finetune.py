@@ -8,9 +8,9 @@
 # !mkdir logs
 # !pip install .
 
-# from nlphub.vizual.colab_yaml import config_yaml
-# >>> Customize train.yaml
-# python finetune.py --config finetune.yaml
+# from modelcraft import widget
+# widget()
+# python finetune.py --config config.yaml
 
 """
 train.py simply:

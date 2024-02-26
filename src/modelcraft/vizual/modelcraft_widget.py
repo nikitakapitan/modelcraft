@@ -3,10 +3,13 @@ import ipywidgets as widgets
 from IPython.display import display, clear_output
 
 
-yaml_file = 'finetune.yaml'  
+yaml_file = 'config.yaml' 
+
 
 with open(yaml_file) as file:
     data = yaml.safe_load(file)
+
+
 
 # Define the options for the widgets
 task_options = ['text-classification', 'ner', 'question-answering']
@@ -29,7 +32,7 @@ dataset_config_name_options = {
 model_options = ['bert-base-uncased', 'distilbert-base-uncased']
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CORE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='HF TOKEN:')
+hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='🤗HF TOKEN:')
 base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL:')
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK:')
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET:')
@@ -45,29 +48,42 @@ task_widget.observe(update_dataset_name_options, 'value')
 dataset_name_widget.observe(update_dataset_config_name_options, 'value')
 
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CORE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DISTILL <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+distill_checkbox = widgets.Checkbox(value=False, description='Distillation')  
+distill_container = widgets.VBox([])
+distill_teacher_name_widget = widgets.Text(value='', description='🎓TEACHER', placeholder='Enter teacher model name')
+distill_alpha_widget =  widgets.FloatSlider(value=1.0, min=0.0, max=1.0, step=0.1, description='ALPHA')
+
+def toggle_distill_checkbox(change):
+    if change.new:
+        distill_container.layout=widgets.Layout(border='1px solid black', padding='10px')
+        distill_container.children = [distill_teacher_name_widget, distill_alpha_widget]
+    else:
+        distill_container.layout.display = 'none'
+
+distill_checkbox.observe(toggle_distill_checkbox, 'value')
+### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DISTILL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CUSTOM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 custom_model_checkbox = widgets.Checkbox(value=False, description='⚙️CUSTOM')  
 custom_container = widgets.VBox([])
 custom_model_name_widget = widgets.Text(value='', description='⚙️MODEL', placeholder='Enter custom model name')
 custom_dataset_name_widget = widgets.Text(value='', description='⚙️DATASET', placeholder='Enter custom dataset name')
-custom_dataset_config_name_widget = widgets.Text(value='', description='⚙️DATA.CFG', placeholder='Enter custom dataset config')
+custom_dataset_config_name_widget = widgets.Text(value='', description='⚙️DATACFG', placeholder='Enter custom dataset config')
 
 # Update function for CUSTOM checkbox change
-def toggle_custom_model_name_widget(change):
+def toggle_custom_model_checkbox(change):
     if change.new:
         custom_container.layout=widgets.Layout(border='1px solid black', padding='10px', background='lightgreen')
         custom_container.children = [custom_model_name_widget, custom_dataset_name_widget, custom_dataset_config_name_widget] if change.new else []
+        # hide CORE widgets
         for widget in (base_model_name_widget, dataset_name_widget, dataset_config_name_widget): widget.layout.display = 'none'
     else:
         custom_container.layout.display = 'none'
         for widget in (base_model_name_widget, dataset_name_widget, dataset_config_name_widget): widget.layout.display = 'flex'
 
-
-
-
-
-custom_model_checkbox.observe(toggle_custom_model_name_widget, 'value')
+custom_model_checkbox.observe(toggle_custom_model_checkbox, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< METRICS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -85,6 +101,7 @@ glue_metrics_container = widgets.VBox([])
 glue_metrics_widget = widgets.Dropdown(options=glue_metrics, description='GLUE metric:', layout=widgets.Layout(width='auto'))
 
 def toggle_add_metrics(change):  
+    metrics_container.layout=widgets.Layout(border='1px solid black', padding='10px')
     metrics_container.children = [isAccuracy_widget, isF1_widget, f1_average_container, isGlue_widget, glue_metrics_container] if change.new else []
 
 # def toggle_isAccuracyW(change): NO NEED
@@ -141,20 +158,25 @@ advanced_checkbox.observe(toggle_advanced_settings, 'value')
 
 save_button = widgets.Button(description="Save Changes")
 
-def save_changes(b):
+def save_changes():
     data['HF_TOKEN'] = hf_token_widget.value 
     data['TASK'] = task_widget.value
+    data['BASE_MODEL_NAME'] = base_model_name_widget.value
+    data['DATASET_NAME'] = dataset_name_widget.value
+    data['DATASET_CONFIG_NAME'] = dataset_config_name_widget.value
+
+    if distill_checkbox.value:
+        data['DISTILL'] = True
+        data['DISTILL_ALPHA'] = distill_alpha_widget.value
+        data['DISTILL_TEACHER'] = distill_teacher_name_widget.value 
+
     if custom_model_checkbox.value:
         data['BASE_MODEL_NAME'] = custom_model_name_widget.value
         data['DATASET_NAME'] = custom_dataset_name_widget.value
         data['DATASET_CONFIG_NAME'] = custom_dataset_config_name_widget.value  
-    else:
-        data['BASE_MODEL_NAME'] = base_model_name_widget.value
-        data['DATASET_NAME'] = dataset_name_widget.value
-        data['DATASET_CONFIG_NAME'] = dataset_config_name_widget.value  
     
-    data['COMPUTE_METRICS'] = add_metrics_checkbox.value
     if add_metrics_checkbox.value:
+        data['COMPUTE_METRICS'] = add_metrics_checkbox.value
         metrics_config = []
         if isAccuracy_widget.value:
             metrics_config.append({'accuracy': {}})
@@ -173,8 +195,6 @@ def save_changes(b):
         data['PUSH_TO_HUB'] = push_to_hub_widget.value
         data['EVALUATION_STRATEGY'] = evaluation_strategy_widget.value
 
-    # update_metrics()
-
     with open(yaml_file, 'w') as file:
         yaml.safe_dump(data, file)
 
@@ -191,11 +211,12 @@ save_button.on_click(save_changes)
 output = widgets.Output()
 
 # Display widgets
-def finetune_widget():
+def widget():
     display(hf_token_widget, 
             base_model_name_widget, 
             task_widget, 
             dataset_name_widget, dataset_config_name_widget, 
+            distill_checkbox, distill_container,
             custom_model_checkbox, custom_container, 
             add_metrics_checkbox, metrics_container, 
             advanced_checkbox, advanced_settings_container,

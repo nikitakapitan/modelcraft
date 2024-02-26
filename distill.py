@@ -35,12 +35,12 @@ def main(args):
 
     # Distill Training Arguments
     student_training_args =  DistillationTrainingArguments(
-        output_dir=f'{config["TEACHER"]}-distilled-{config["DATASET_NAME"]}{data_cfg}',
+        output_dir=f'{config["DISTILL_TEACHER"]}-distilled-{config["DATASET_NAME"]}{data_cfg}',
         num_train_epochs=config['NUM_EPOCHS'],
         learning_rate=config['LEARNING_RATE'],
         per_device_train_batch_size=config['BATCH_SIZE'],
         per_device_eval_batch_size=config['BATCH_SIZE'],
-        alpha = config['ALPHA'],
+        alpha = config['DISTILL_ALPHA'],
         weight_decay=0.01,
         evaluation_strategy='epoch',
         disable_tqdm=False,
@@ -49,7 +49,7 @@ def main(args):
         log_level=config['LOG_LEVEL'],
     )
 
-    trainer = DistillationTrainer(
+    distill_trainer = DistillationTrainer(
         model_init=distiller.student_init,
         teacher_model=distiller.teacher,
         args=student_training_args,
@@ -61,11 +61,11 @@ def main(args):
 
     # Train and Evaluate
     logging.info("Start TRAINING")
-    trainer.train()
-    trainer.evaluate()
+    distill_trainer.train()
+    distill_trainer.evaluate()
 
     # Push to Hub
-    trainer.push_to_hub()
+    distill_trainer.push_to_hub()
     logging.info("Model pushed to Hugging Face Hub.")
 
 

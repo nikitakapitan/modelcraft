@@ -17,3 +17,6 @@ PUSH_TO_HUB: true
 TASK: text-classification
 WARMUP_STEPS: 500
 WEIGHT_DECAY: 0.01
+DISTILL: false
+DISTILL_ALPHA: null
+DISTILL_TEACHER: null
