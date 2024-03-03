@@ -1,5 +1,9 @@
 # Model Craft: Fine-Tuning and Distillation of LLM Models
 
+<p align="center">
+  <img src="docs/images/alchi.jpeg" alt="Setup widget" />
+</p>
+
 Model Craft is a toolkit for fine-tuning and distilling Large Language Models (LLMs) with ease. This project allows AI researchers and enthusiasts to craft their own LLMs and push them to Hugging Face's model hub.
 
 ## Quick Start
