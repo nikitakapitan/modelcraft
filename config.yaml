@@ -2,19 +2,16 @@ BASE_MODEL_NAME: distilbert-base-uncased
 BATCH_SIZE: 16
 COMPUTE_METRICS: true
 DATASET_CONFIG_NAME: null
-DATASET_NAME: imdb
+DATASET_NAME: emotion
 DISTILL: true
 DISTILL_ALPHA: 0.4
 DISTILL_TEACHER: dfg
-HF_TOKEN: hf_YOUR_TOKEN_HERE
+HF_TOKEN: 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
 LEARNING_RATE: 2.0e-05
 LOG_LEVEL: error
 METRICS:
-- accuracy: {}
 - f1:
-    average: micro
-- glue:
-  - qqp
+    average: weighted
 NUM_EPOCHS: 3
 PUSH_TO_HUB: true
 TASK: text-classification

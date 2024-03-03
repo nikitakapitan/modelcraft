@@ -1,15 +1,13 @@
 import yaml
 import ipywidgets as widgets
 from IPython.display import display, clear_output
+import subprocess
 
 
 yaml_file = 'config.yaml' 
 
-
 with open(yaml_file) as file:
     data = yaml.safe_load(file)
-
-
 
 # Define the options for the widgets
 task_options = ['text-classification', 'ner', 'question-answering']
@@ -36,7 +34,7 @@ hf_token_widget = widgets.Text(value='hf_YOUR_TOKEN_HERE', description='🤗HFTO
 base_model_name_widget = widgets.Dropdown(options=model_options, value=data['BASE_MODEL_NAME'], description='MODEL')
 task_widget = widgets.Dropdown(options=task_options, value=data['TASK'], description='TASK')
 dataset_name_widget = widgets.Dropdown(options=dataset_name_options[data['TASK']], value=data['DATASET_NAME'], description='DATASET')
-dataset_config_widget = widgets.Dropdown(options=dataset_config_name_options[data['DATASET_NAME']], value=data['DATASET_CONFIG_NAME'], description='DATA CFG')
+dataset_config_widget = widgets.Dropdown(options=dataset_config_name_options.get(data['DATASET_NAME'],[]), value=data['DATASET_CONFIG_NAME'], description='DATA CFG')
 
 def update_dataset_name_options(change):
     dataset_name_widget.options = dataset_name_options.get(task_widget.value, [])
@@ -54,11 +52,12 @@ distill_checkbox = widgets.Checkbox(value=False, description='⚗️Distillation
 distill_container = widgets.VBox([])
 distill_teacher_name_widget = widgets.Text(value='', description='🎓TEACHER', placeholder='Enter teacher model name')
 distill_alpha_widget =  widgets.FloatSlider(value=1.0, min=0.0, max=1.0, step=0.1, description='ALPHA')
+distill_alpha_container = widgets.HBox([distill_alpha_widget, widgets.Label('Loss = α * loss_CE + (1 - α) * teacher_loss')])
 
 def toggle_distill_checkbox(change):
     if change.new:
         distill_container.layout=widgets.Layout(border='1px solid black', padding='10px')
-        distill_container.children = [distill_teacher_name_widget, distill_alpha_widget]
+        distill_container.children = [distill_teacher_name_widget, distill_alpha_container]
     else:
         distill_container.layout.display = 'none'
 
@@ -94,7 +93,7 @@ isAccuracy_widget = widgets.Checkbox(value=False, description='accuracy')
 # F1
 isF1_widget = widgets.Checkbox(value=False, description='f1')
 f1_average_container = widgets.VBox([])
-f1_average_widget = widgets.Dropdown(options=['macro', 'micro', 'weighted'], description='f1 average:', layout=widgets.Layout(width='auto'))
+f1_average_widget = widgets.Dropdown(options=['weighted', 'macro', 'micro'], description='f1 average:', layout=widgets.Layout(width='auto'))
 # Glue
 isGlue_widget = widgets.Checkbox(value=False, description='glue')
 glue_metrics_container = widgets.VBox([])
@@ -155,9 +154,9 @@ advanced_checkbox.observe(toggle_advanced_settings, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADVANCED >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SAVE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRAIN >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-save_button = widgets.Button(description="Save Changes")
+train_button = widgets.Button(description="TRAIN", button_style='success')
 
 def save_changes(change):
     data['HF_TOKEN'] = hf_token_widget.value 
@@ -203,10 +202,31 @@ def save_changes(change):
         clear_output()
         print(f"{yaml_file} updated!")
 
-save_button.on_click(save_changes)
+def execute_train_command(b):
+    cmd = "python finetune.py --config config.yaml"
+    if data['DISTILL']:
+        cmd = "python distill.py --config config.yaml"
 
-### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SAVE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    
+    if process.returncode == 0:
+        print("Training successfully finished!")
+        print(stdout.decode())
+    else:
+        print(f"Error executing {cmd} command")
+        print(stderr.decode())
 
+def save_and_execute(b):
+    save_changes(b)
+    # execute_train_command(b)
+
+train_button.on_click(save_and_execute)
+
+### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TRAIN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< NEW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> NEW >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # Output
 output = widgets.Output()
@@ -221,5 +241,6 @@ def widget():
             custom_model_checkbox, custom_container, 
             add_metrics_checkbox, metrics_container, 
             advanced_checkbox, advanced_settings_container,
-            save_button, output)
+            train_button,
+            output)
     
