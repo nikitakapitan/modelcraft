@@ -1,7 +1,7 @@
 # Model Craft: Fine-Tuning and Distillation of LLM Models
 
 <p align="center">
-  <img src="docs/images/alchi.jpeg" alt="Setup widget" width="300" /> <!-- Adjust the width as needed -->
+  <img src="docs/images/alchi_long.png" alt="Setup widget" width="900" /> <!-- Adjust the width as needed -->
 </p>
 
 
