@@ -156,7 +156,7 @@ advanced_checkbox.observe(toggle_advanced_settings, 'value')
 
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SAVE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-save_button = widgets.Button(description="SAVE", button_style='success')
+save_button = widgets.Button(description="SAVE✅", button_style='success')
 
 def save_changes(change):
     data['HF_TOKEN'] = hf_token_widget.value 

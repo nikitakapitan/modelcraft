@@ -4,7 +4,7 @@ Model Craft is a toolkit for fine-tuning and distilling Large Language Models (L
 
 ## Quick Start
 
-You only need to launch it, select the model, select the dataset and hit the button ✅
+You only need to launch it, select the model, select the dataset and hit the button "SAVE✅"
 
 ### Prerequisites
 
