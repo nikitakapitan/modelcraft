@@ -154,9 +154,9 @@ advanced_checkbox.observe(toggle_advanced_settings, 'value')
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADVANCED >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRAIN >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SAVE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-train_button = widgets.Button(description="TRAIN", button_style='success')
+save_button = widgets.Button(description="SAVE", button_style='success')
 
 def save_changes(change):
     data['HF_TOKEN'] = hf_token_widget.value 
@@ -202,28 +202,10 @@ def save_changes(change):
         clear_output()
         print(f"{yaml_file} updated!")
 
-def execute_train_command(b):
-    cmd = "python finetune.py --config config.yaml"
-    if data['DISTILL']:
-        cmd = "python distill.py --config config.yaml"
 
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    
-    if process.returncode == 0:
-        print("Training successfully finished!")
-        print(stdout.decode())
-    else:
-        print(f"Error executing {cmd} command")
-        print(stderr.decode())
+save_button.on_click(save_changes)
 
-def save_and_execute(b):
-    save_changes(b)
-    # execute_train_command(b)
-
-train_button.on_click(save_and_execute)
-
-### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TRAIN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SAVE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 ### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< NEW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> NEW >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -241,6 +223,6 @@ def widget():
             custom_model_checkbox, custom_container, 
             add_metrics_checkbox, metrics_container, 
             advanced_checkbox, advanced_settings_container,
-            train_button,
+            save_button,
             output)
     
