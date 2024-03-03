@@ -9,7 +9,12 @@ Model Craft is a toolkit for fine-tuning and distilling Large Language Models (L
 
 ## Quick Start
 
-You only need to launch it, select the model, select the dataset and hit the button "SAVE✅"
+All you need is to:
+1. open google colab
+2. install this repo
+3. import widget
+4. custimize the config
+5. hit the button "SAVE✅" and run the training.
 
 ### Prerequisites
 
